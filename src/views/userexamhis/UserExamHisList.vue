@@ -1,5 +1,5 @@
 <template>
-  <page-card title="试卷列表">
+  <page-card title="考生试卷记录管理">
     <div class="table-page-search-wrapper">
       <a-row type="flex"
              style="margin-bottom:20px"
@@ -28,17 +28,9 @@
              :data-source="data"
              @change="handleTableChange"
              :pagination="pagination">
-      <span slot="operation"
+      <span slot="action"
             slot-scope="text, record">
-
-        <Zoptionitem :optiondata="optiondata"
-                     :record="record">
-        </Zoptionitem>
-      </span>
-      <!-- <span slot="action"
-            slot-scope="text, record">
-
-        <template v-if="hasPermission('edit')">
+        <template>
           <a @click="handleEdit(record.id)">编辑</a>
         </template>
         <template v-if="hasPermission('delete')">
@@ -50,97 +42,93 @@
             <a href="javascript:;">删除</a>
           </a-popconfirm>
         </template>
-      </span> -->
+      </span>
     </a-table>
   </page-card>
 </template>
 <script>
-import { examPaperList, examPaperDel } from '@/api/exampaper'
-import { PAGINATION, TABLE_STATUS_CELL } from 'zongheng-pro/constants'
-import Zoptionitem from '@zt/zongheng-pro/framework/components/z-column/Zoptionitem'
+import { userExamHisList, userExamHisDel } from '@/api/userexamhis'
+import { PAGINATION, TABLE_STATUS_CELL } from '@zt/zongheng-pro/framework/constants'
 
 export default {
-  components: { Zoptionitem },
   data () {
     return {
       data: [],
       pagination: PAGINATION,
       statusCell: TABLE_STATUS_CELL,
       queryParam: {},
-      optiondata: [
-        // 常规写法
-        {
-          type: 'text',// 按钮类型，点击后无弹框或confirm提示
-          fn: this.handleEdit,// 按钮方法
-          title: '修改',// 按钮名称
-        },
-        {
-          type: 'text',// 按钮类型，点击后无弹框或confirm提示
-          fn: this.handleEdit,// 按钮方法
-          title: '修改1',// 按钮名称
-        },
-        {
-          type: 'text',// 按钮类型，点击后无弹框或confirm提示
-          fn: this.handleEdit,// 按钮方法
-          title: '修改2',// 按钮名称
-        },
-        {
-          type: 'confirm', // 有confirm弹出框
-          fn: this.handleDelete,
-          title: '删除',
-          show: this.hasPermission('delete'),
-          confirm: {
-            title: '确定要删除吗？',
-            okfn: this.handleDelete
-          }
-        },
-      ],
       columns: [
         {
-          title: '试卷名称',
+          title: '考生试卷id',
+          dataIndex: 'id'
+        }
+        ,
+        {
+          title: '总分',
+          dataIndex: 'totalPoint'
+        }
+        ,
+        {
+          title: '试卷名+姓名+考试序号(时间戳)',
           dataIndex: 'name'
         }
-        // ,
-        // {
-        //   title: '类型',
-        //   dataIndex: 'type'
-        // }
-        // ,
-        // {
-        //   title: '学科',
-        //   dataIndex: 'subject'
-        // }
-        // ,
-        // {
-        //   title: '年级',
-        //   dataIndex: 'grade'
-        // }
         ,
         {
-          title: '考试时长(分)',
-          dataIndex: 'duration'
+          title: '试卷id',
+          dataIndex: 'examPaperId'
         }
         ,
         {
-          title: '备注',
-          dataIndex: 'remark'
-        },
+          title: '考生id',
+          dataIndex: 'userId'
+        }
+        ,
         {
-          title: '操作',
-          scopedSlots: { customRender: 'operation' }
+          title: '试题id',
+          dataIndex: 'questionId'
+        }
+        ,
+        {
+          title: '学生答案',
+          dataIndex: 'userOption'
+        }
+        ,
+        {
+          title: '是否正确',
+          dataIndex: 'correctFlag'
+        }
+        ,
+        {
+          title: '真实得分',
+          dataIndex: 'point'
+        }
+        ,
+        {
+          title: '创建时间',
+          dataIndex: 'createTime'
+        }
+        ,
+        {
+          title: '考试开始时间',
+          dataIndex: 'beginTime'
+        }
+        ,
+        {
+          title: '考试结束时间',
+          dataIndex: 'endTime'
         }
       ]
     }
   },
   created () {
-    // if (this.hasPermissions('edit', 'delete')) {
-    //   this.columns.push({
-    //     title: '操作',
-    //     width: 130,
-    //     align: 'center',
-    //     scopedSlots: { customRender: 'action' }
-    //   })
-    // }
+    if (this.hasPermissions('edit', 'delete')) {
+      this.columns.push({
+        title: '操作',
+        width: 130,
+        align: 'center',
+        scopedSlots: { customRender: 'action' }
+      })
+    }
   },
   activated () {
     this.load()
@@ -153,7 +141,8 @@ export default {
     load () {
       this.queryParam.currPage = this.pagination.current
       this.queryParam.pageSize = this.pagination.pageSize
-      examPaperList({ ...this.queryParam }).then((response) => {
+      debugger
+      userExamHisList({ ...this.queryParam }).then((response) => {
         this.data = response.list
         this.pagination.current = response.currPage
         this.pagination.total = response.totalCount
@@ -169,18 +158,18 @@ export default {
         path: 'add'
       })
     },
-    handleEdit (record) {
+    handleEdit (id) {
       this.$router.push({
         path: 'edit',
         query: {
-          id: record.id
+          id: id
         }
       })
     },
     handleDelete (id) {
       const data = []
       data.push(id)
-      examPaperDel(data).then(() => {
+      userExamHisDel(data).then(() => {
         this.message.success('删除成功')
         this.load()
       })
