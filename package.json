@@ -1,0 +1,34 @@
+{
+  "name": "demo-vue",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "remove": "rmdir /s/q node_modules"
+  },
+  "dependencies": {
+    "@zenith/vue-commons": "^2.0.0",
+    "@zt/zongheng-pro": "^3.0.0",
+    "core-js": "^3.6.5",
+    "prerender-spa-plugin": "^3.4.0",
+    "vue": "^2.6.11",
+    "vue-router": "^3.5.2",
+    "vuex": "^3.6.2",
+    "zenith-vue-components": "^3.0.4"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "hard-source-webpack-plugin": "^0.13.1",
+    "less": "^3.13.1",
+    "less-loader": "^5.0.0",
+    "vue-svg-icon-loader": "^2.1.1",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 10"
+  ]
+}
